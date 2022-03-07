@@ -39,14 +39,15 @@ corr['Price'].sort_values(ascending=False)
 
 """This code does two things. First, it standardizes the values.  Also, it plots them after the standardization. """
 
-x = df[['RM']]
+x = pd.DataFrame(boston_data['data'], columns = boston_data.feature_names)
+
 y = df['Price']
 x = (x - x.mean())/x.std()
 #y = (y - y.mean())/y.std()
-plt.scatter(x,y)
-plt.xlabel('Number of rooms per house', size = 20)
-plt.ylabel('House Price', size = 20)
-plt.show()
+# plt.scatter(x,y)
+# plt.xlabel('Number of rooms per house', size = 20)
+# plt.ylabel('House Price', size = 20)
+# plt.show()
 #x
 
 x = np.c_[np.ones(x.shape[0]),x] #adds ones for the weights
@@ -54,7 +55,7 @@ x = np.c_[np.ones(x.shape[0]),x] #adds ones for the weights
 alpha = 0.05   #learning rate
 m = y.size  #no. of samples
 np.random.seed(10)
-theta = np.random.rand(2)  #initializing theta with some random values for slope
+theta = np.random.rand(14)  #initializing theta with some random values for slope
 #x
 
 """Now the fun starts in batch.  Note that we are using MSE -- 1/(2*m) but the error is simply prediction - y.  Also, as we do things in Numpy the batch for the whole matrix is simply np.dot(error.T, error)."""
@@ -86,6 +87,18 @@ def gradient_descent(x, y, m, theta,  alpha):
 
 prediction_list, cost_list, theta_list = gradient_descent(x, y, m, theta, alpha)
 theta = theta_list[-1]
+pred= prediction_list[-1]
+cost = cost_list[-1]
+print('many value with np: cost:',cost)
+from sklearn.metrics import mean_squared_error
+from sklearn.linear_model import LinearRegression
+lm = LinearRegression()
+lm.fit(x,y)
+pred_from_sk=lm.predict(x)
+mse_sklearn=mean_squared_error(y,pred_from_sk)
+print('many value sklearn:',mse_sklearn)
+# many value with np: cost: 10.94743119827486
+# many value sklearn: 21.894831181729206
 print(theta)
 
 """Visualizations of the slope convergence"""
