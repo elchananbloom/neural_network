@@ -102,10 +102,18 @@ cost_array = [] # keeping a list of the cost at each iteration to make sure it i
 iterations = 1000 #like the red arrow in slide 37
 lr = 0.01
 
+def dot(X_train,theta):
+    grad = np.zeros(X_train.shape[0])
+    for i in range(X_train.shape[0]):
+        for j in range(0, X_train.shape[1]):
+            grad[i] = grad[i] + X_train[i][j]*theta[j]
+            # grad[i] = grad[i] - (y_actual[j]-y_pred[j])*x[j][i] #other way to write this
+    return grad
 for i in range(iterations):   
-    z = np.dot(X_train, theta)
+    z = dot(X_train, theta)
+    #z = np.dot(X_train, theta)
     a = sigmoid(z)
-    gradient = np.dot(X_train.T, (a - y_train)) / y_train.shape[0]
+    gradient = dot(X_train.T, (a - y_train)) / y_train.shape[0]
     #if (i>998):
     #  print(a)
     theta -= lr * gradient
@@ -153,5 +161,6 @@ print("accuracy = ", accuracy * 100, "%")
 print('Coefficients: \n', sk_model.coef_)
 
 print(theta)
+
 
 y_train
