@@ -1,3 +1,5 @@
+#elchanan bloom 207193855
+#Chananel Zaguri 206275711
 # -*- coding: utf-8 -*-
 """Log_Reg_From_Scratch_Iris.ipynb
 
