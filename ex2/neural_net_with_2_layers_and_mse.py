@@ -16,24 +16,6 @@ import pandas as pd
 from sklearn.model_selection import train_test_split 
 import matplotlib.pyplot as plt
 
-"""### sigmoid(z)
-
-Here we define our activation function; the sigmoid function 
-
-s = $g(\theta^{T}x)$
-
-$z = \theta^{T}x$
-
-$g(z) = \frac{1}{1+e^{(-z)}}$
-
-X := data set
-
-$\theta$ := vector of weights
-
-Compute the sigmoid of z (A scalar or numpy array of any size) returns s
-
-Verify: sigmoid([0, 2]) = [ 0.5, 0.88079708]
-"""
 
 def sigmoid(z):
   X = np.exp(z)
@@ -187,6 +169,8 @@ def prediction_accuracy(y_pred,y_true):
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
+
+
 
 url = 'https://github.com/rosenfa/nn/blob/master/pima-indians-diabetes.csv?raw=true'
 #url = 'https://github.com/rosenfa/nn/blob/master/class2/spam.csv?raw=true'
