@@ -43,6 +43,11 @@ def sigmoid_der(z):
   A = sigmoid(z)
   return A*(1-A)
 
+def relu(z):
+    return np.maximum(0,z)
+
+def relu_der(z):
+    # return np.array([0 if i<0 else 1 for i in y for y in z])
 """Some examples of using this function. Notice that we can give it an array of values (not critical for us)"""
 
 print(sigmoid([0,2]))
@@ -77,10 +82,10 @@ Note that thetas is now a cache of thetas (weights)
 * cache -- a dictionary containing "Z1", "A1", "Z2" and "A2"
 """
 
-def forward_propagation(X, parameters):
+def forward_propagation(X, parameters,func):
     #Hidden Layer
     Z1 = parameters["W1"].dot(X)+parameters["b1"]
-    A1 = np.tanh(Z1) #change here for the targil
+    A1 = func(Z1) #change here for the targil
     #Output Layer
     Z2 = parameters["W2"].dot(A1)+parameters["b2"]
     A2 = sigmoid(Z2)
@@ -99,7 +104,7 @@ def tanh_der(z):
     X=np.tanh(z)
     return 1-X**2
 
-def backward_propagation(parameters, cache, X, Y):
+def backward_propagation(parameters, cache, X, Y,func):
     m = X.shape[1] # Number of samples
     #Assuming the Log_loss function is used -- like last time:
     #Output Layer--similar to the last time
@@ -114,7 +119,7 @@ def backward_propagation(parameters, cache, X, Y):
     #db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
     #Hidden Layer
     dA1 = np.dot(parameters["W2"].T, dA2)
-    dZ1 =  dA1 * tanh_der(cache["Z1"])  #change here for the targil 
+    dZ1 =  dA1 * func(cache["Z1"])  #change here for the targil
     dW1 = (1 / m) * np.dot(dZ1, X.T)
     db1 = (1 / m) * np.sum(dZ1)
     #db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
@@ -153,17 +158,17 @@ Builds the logistic regression model by calling the functions implemented above
 * d -- dictionary containing information about the model. 
 """
 
-def nn_model(X, Y, iterations,lr):
+def nn_model(X, Y, iterations,lr,nh,func,func_der):
     n_x=X.shape[0]
-    n_h=5  #change here for the targil
+    n_h=nh  #change here for the targil
     n_y=1
     parameters = initialize_parameters(n_x,n_h,n_y)
     print("Network shape " , X.shape[0], n_h , n_y)
     for i in range(iterations):
-        A2, cache = forward_propagation(X,parameters)
+        A2, cache = forward_propagation(X,parameters,func)
         cost = MSE_calculation(A2,Y)
         #cost = LogLoss_calculation(A2,Y)
-        grads = backward_propagation(parameters,cache,X,Y)
+        grads = backward_propagation(parameters,cache,X,Y,func_der)
         parameters = update_parameters(parameters,grads,lr)
         costs.append(cost)
         #cost check
@@ -173,8 +178,8 @@ def nn_model(X, Y, iterations,lr):
 
 """### predict(X, parameters): Y_prediction"""
 
-def predict(X, parameters):
-    A2, cache = forward_propagation(X, parameters)
+def predict(X, parameters,func):
+    A2, cache = forward_propagation(X, parameters,func)
     return np.rint(A2)
     '''This round the values like:
     def predict(X, theta, threshold=0.5):
@@ -188,9 +193,83 @@ def prediction_accuracy(y_pred,y_true):
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+'''
+here we are
+'''
+
+# creat 3 tabel for the testing:
+# relu
+testing_relu_data= {
+    'alpha':[0]*6,
+    '500 iter':[0]*6,
+    '1000 iter':[0]*6,
+    '1500 iter':[0]*6,
+    '2000 iter':[0]*6
+
+}
+testing_relu_df = pd.DataFrame(testing_relu_data, index=['1 nodes','2 nodes','3 nodes','4 nodes','5 nodes','6 nodes'])
+
+
+# tanh
+testing_tanh_data= {
+    'alpha':[0]*6,
+    '500 iter':[0]*6,
+    '1000 iter':[0]*6,
+    '1500 iter':[0]*6,
+    '2000 iter':[0]*6
+
+}
+testing_tanh_df = pd.DataFrame(testing_tanh_data, index=['1 nodes','2 nodes','3 nodes','4 nodes','5 nodes','6 nodes'])
+
+# sigmoid
+testing_sigmoid_data= {
+    'alpha':[0]*6,
+    '500 iter':[0]*6,
+    '1000 iter':[0]*6,
+    '1500 iter':[0]*6,
+    '2000 iter':[0]*6
+
+}
+testing_sigmoid_df = pd.DataFrame(testing_sigmoid_data, index=['1 nodes','2 nodes','3 nodes','4 nodes','5 nodes','6 nodes'])
+
+# creat 3 tabel for the training:
+
+
+# tanh
+training_tanh_data= {
+    'alpha':[0]*6,
+    '500 iter':[0]*6,
+    '1000 iter':[0]*6,
+    '1500 iter':[0]*6,
+    '2000 iter':[0]*6
+
+}
+training_tanh_df = pd.DataFrame(training_tanh_data, index=['1 nodes','2 nodes','3 nodes','4 nodes','5 nodes','6 nodes'])
+# relu
+training_relu_data= {
+    'alpha':[0]*6,
+    '500 iter':[0]*6,
+    '1000 iter':[0]*6,
+    '1500 iter':[0]*6,
+    '2000 iter':[0]*6
+
+}
+training_relu_df = pd.DataFrame(training_relu_data, index=['1 nodes','2 nodes','3 nodes','4 nodes','5 nodes','6 nodes'])
+# sigmoid
+training_sigmoid_data= {
+    'alpha':[0]*6,
+    '500 iter':[0]*6,
+    '1000 iter':[0]*6,
+    '1500 iter':[0]*6,
+    '2000 iter':[0]*6
+
+}
+training_sigmoid_df = pd.DataFrame(training_sigmoid_data, index=['1 nodes','2 nodes','3 nodes','4 nodes','5 nodes','6 nodes'])
+
+
 url = 'https://github.com/rosenfa/nn/blob/master/pima-indians-diabetes.csv?raw=true'
 #url = 'https://github.com/rosenfa/nn/blob/master/class2/spam.csv?raw=true'
-df=pd.read_csv(url,  header=0, error_bad_lines=False) 
+df=pd.read_csv(url,  header=0, error_bad_lines=False)
 features = df.drop(['Outcome'], axis = 1 )
 features = ((features - features.mean())/features.std())
 X = np.array(features)
@@ -199,8 +278,8 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y, random_state=0)
 df
 
 from sklearn.linear_model import LogisticRegression
-sk_model = LogisticRegression()     
-sk_model.fit(X_train, Y_train)  
+sk_model = LogisticRegression()
+sk_model.fit(X_train, Y_train)
 accuracy = sk_model.score(X_test, Y_test)
 print("accuracy = ", accuracy * 100, "%")
 #print(Y_train)
@@ -210,15 +289,35 @@ X_train, X_test = X_train.T, X_test.T
 num_iterations=2000 #number of iterations  #change here for the targil
 alpha = 1 #learning rate
 costs = []
-parameters, costs = nn_model(X_train, Y_train,num_iterations,alpha)
-Y_train_predict = predict(X_train, parameters)
-train_acc = prediction_accuracy(Y_train_predict,Y_train)
-Y_test_predict = predict(X_test, parameters)
-test_acc = prediction_accuracy(Y_test_predict,Y_test)
-parameters["train_accuracy"] = train_acc
-parameters["test_accuracy"] = test_acc
+# parameters, costs = nn_model(X_train, Y_train,num_iterations,alpha)
+# Y_train_predict = predict(X_train, parameters)
+# train_acc = prediction_accuracy(Y_train_predict,Y_train)
+# Y_test_predict = predict(X_test, parameters)
+# test_acc = prediction_accuracy(Y_test_predict,Y_test)
+# parameters["train_accuracy"] = train_acc
+# parameters["test_accuracy"] = test_acc
 
-plt.plot(costs)
+# plt.plot(costs)
 
-print("Training acc : ", str(train_acc))
-print("Testing acc : ", str(test_acc))
+# print("Training acc : ", str(train_acc))
+# print("Testing acc : ", str(test_acc))
+
+funcs = [np.tanh,sigmoid,relu]
+funcs_der=[tanh_der,sigmoid_der,relu_der]
+df_train=[training_tanh_df,training_sigmoid_df,training_relu_df]
+df_test=[testing_tanh_df,testing_sigmoid_df,testing_relu_df]
+for i in range(len(funcs)):
+    for iterations in range(500,2001,500):
+        for nh in range(1,7):
+            parameters, costs = nn_model(X_train,Y_train,iterations,alpha,nh,funcs[i],funcs_der[i])
+            Y_train_predict = predict(X_train, parameters,funcs[i])
+            train_acc = prediction_accuracy(Y_train_predict, Y_train)
+            Y_test_predict = predict(X_test, parameters,funcs[i])
+            test_acc = prediction_accuracy(Y_test_predict, Y_test)
+            df_train[i][f'{iterations} iter'][f'{nh} nodes'] = train_acc
+            df_test[i][f'{iterations} iter'][f'{nh} nodes'] = test_acc
+    print(df_train[i])
+    print(df_test[i])
+    df_train[i].plot()
+    df_test[i].plot()
+plt.show()
