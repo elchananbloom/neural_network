@@ -46,11 +46,14 @@ def sigmoid_der(z):
 def relu(z):
     return np.maximum(0,z)
 
-def relu_der(z):
-    for n,i in enumerate(z):
-        for n1,j in enumerate(i):
-            z[n][n1]=0 if j<0 else 1
-    return z
+relu_der = lambda x : np.array([(i > 0) * 1 for i in x])
+
+# def relu_der(z):
+#
+#     for n,i in enumerate(z):
+#         for n1,j in enumerate(i):
+#             z[n][n1]=0 if j<0 else 1
+#     return z
     # return np.array([0 if i<0 else 1 for i in [y for y in z]])
 """Some examples of using this function. Notice that we can give it an array of values (not critical for us)"""
 
@@ -326,14 +329,19 @@ for i in range(len(funcs)):
     print(df_test[i])
 
     plot_train=df_train[i].plot(title= f'training {funcs[i]}')
+    ax1 = plt.gca()
+    ax1.set_ylim([0.7, 0.9])
     # plt.title('training')
     #df_train[i].title('training')
     plot_test=df_test[i].plot(title= f'testing {funcs[i]}')
     # plt.title('testing')
     #df_test[i].title('testing')
+    ax = plt.gca()
+    ax.set_ylim([0.7, 0.9])
     plot_train.get_figure().savefig(f'output_train{i}.pdf', format='pdf')
     plot_test.get_figure().savefig(f'output_test{i}.pdf', format='pdf')
-
+ax=plt.gca()
+ax.set_ylim([0.7,0.9])
 plt.show()
 
 
