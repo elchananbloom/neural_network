@@ -47,7 +47,11 @@ def relu(z):
     return np.maximum(0,z)
 
 def relu_der(z):
-    # return np.array([0 if i<0 else 1 for i in y for y in z])
+    for n,i in enumerate(z):
+        for n1,j in enumerate(i):
+            z[n][n1]=0 if j<0 else 1
+    return z
+    # return np.array([0 if i<0 else 1 for i in [y for y in z]])
 """Some examples of using this function. Notice that we can give it an array of values (not critical for us)"""
 
 print(sigmoid([0,2]))
@@ -302,7 +306,9 @@ costs = []
 # print("Training acc : ", str(train_acc))
 # print("Testing acc : ", str(test_acc))
 
+#funcs = [relu]
 funcs = [np.tanh,sigmoid,relu]
+#funcs_der=[relu_der]
 funcs_der=[tanh_der,sigmoid_der,relu_der]
 df_train=[training_tanh_df,training_sigmoid_df,training_relu_df]
 df_test=[testing_tanh_df,testing_sigmoid_df,testing_relu_df]
@@ -318,6 +324,16 @@ for i in range(len(funcs)):
             df_test[i][f'{iterations} iter'][f'{nh} nodes'] = test_acc
     print(df_train[i])
     print(df_test[i])
-    df_train[i].plot()
-    df_test[i].plot()
+
+    plot_train=df_train[i].plot(title= f'training {funcs[i]}')
+    # plt.title('training')
+    #df_train[i].title('training')
+    plot_test=df_test[i].plot(title= f'testing {funcs[i]}')
+    # plt.title('testing')
+    #df_test[i].title('testing')
+    plot_train.get_figure().savefig(f'output_train{i}.pdf', format='pdf')
+    plot_test.get_figure().savefig(f'output_test{i}.pdf', format='pdf')
+
 plt.show()
+
+
