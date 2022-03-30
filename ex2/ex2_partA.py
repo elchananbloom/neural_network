@@ -43,18 +43,12 @@ def sigmoid_der(z):
   A = sigmoid(z)
   return A*(1-A)
 
+#relu function
 def relu(z):
     return np.maximum(0,z)
-
+#derivative relu function
 relu_der = lambda x : np.array([(i > 0) * 1 for i in x])
 
-# def relu_der(z):
-#
-#     for n,i in enumerate(z):
-#         for n1,j in enumerate(i):
-#             z[n][n1]=0 if j<0 else 1
-#     return z
-    # return np.array([0 if i<0 else 1 for i in [y for y in z]])
 """Some examples of using this function. Notice that we can give it an array of values (not critical for us)"""
 
 print(sigmoid([0,2]))
@@ -92,6 +86,7 @@ Note that thetas is now a cache of thetas (weights)
 def forward_propagation(X, parameters,func):
     #Hidden Layer
     Z1 = parameters["W1"].dot(X)+parameters["b1"]
+    #added the activation func (tnah\sigmoid\relu) which we want to run it on
     A1 = func(Z1) #change here for the targil
     #Output Layer
     Z2 = parameters["W2"].dot(A1)+parameters["b2"]
@@ -126,6 +121,7 @@ def backward_propagation(parameters, cache, X, Y,func):
     #db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
     #Hidden Layer
     dA1 = np.dot(parameters["W2"].T, dA2)
+    #added the derivative func (tnah_der\sigmoid_der\relu_der) which we want to run it on
     dZ1 =  dA1 * func(cache["Z1"])  #change here for the targil
     dW1 = (1 / m) * np.dot(dZ1, X.T)
     db1 = (1 / m) * np.sum(dZ1)
@@ -167,6 +163,7 @@ Builds the logistic regression model by calling the functions implemented above
 
 def nn_model(X, Y, iterations,lr,nh,func,func_der):
     n_x=X.shape[0]
+    #number of nodes in the hidden layer
     n_h=nh  #change here for the targil
     n_y=1
     parameters = initialize_parameters(n_x,n_h,n_y)
@@ -200,11 +197,8 @@ def prediction_accuracy(y_pred,y_true):
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-'''
-here we are
-'''
 
-# creat 3 tabel for the testing:
+# creat 3 tables for the testing:
 # relu
 testing_relu_data= {
     'alpha':[0]*6,
@@ -239,9 +233,7 @@ testing_sigmoid_data= {
 }
 testing_sigmoid_df = pd.DataFrame(testing_sigmoid_data, index=['1 nodes','2 nodes','3 nodes','4 nodes','5 nodes','6 nodes'])
 
-# creat 3 tabel for the training:
-
-
+# creat 3 tables for the training:
 # tanh
 training_tanh_data= {
     'alpha':[0]*6,
@@ -309,14 +301,19 @@ costs = []
 # print("Training acc : ", str(train_acc))
 # print("Testing acc : ", str(test_acc))
 
-#funcs = [relu]
+#activation funcs
 funcs = [np.tanh,sigmoid,relu]
-#funcs_der=[relu_der]
+#derivative funcs
 funcs_der=[tanh_der,sigmoid_der,relu_der]
+#training tables
 df_train=[training_tanh_df,training_sigmoid_df,training_relu_df]
+#testing tables
 df_test=[testing_tanh_df,testing_sigmoid_df,testing_relu_df]
+#run on the amount of activation funcs we have
 for i in range(len(funcs)):
+    #run 4 times for 500\1000\1500\2000 iterations
     for iterations in range(500,2001,500):
+
         for nh in range(1,7):
             parameters, costs = nn_model(X_train,Y_train,iterations,alpha,nh,funcs[i],funcs_der[i])
             Y_train_predict = predict(X_train, parameters,funcs[i])
