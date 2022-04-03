@@ -320,8 +320,8 @@ for i in range(len(funcs)):
             train_acc = prediction_accuracy(Y_train_predict, Y_train)
             Y_test_predict = predict(X_test, parameters,funcs[i])
             test_acc = prediction_accuracy(Y_test_predict, Y_test)
-            df_train[i][f'{iterations} iter'][f'{nh} nodes'] = train_acc
-            df_test[i][f'{iterations} iter'][f'{nh} nodes'] = test_acc
+            df_train[i].loc[f'{nh} nodes',f'{iterations} iter'] = train_acc
+            df_test[i].loc[f'{nh} nodes',f'{iterations} iter'] = test_acc
     print(df_train[i])
     print(df_test[i])
 
