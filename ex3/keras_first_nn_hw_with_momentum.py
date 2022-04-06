@@ -150,10 +150,10 @@ Let's fit our model for 200 epochs.
 from tensorflow.keras.optimizers import SGD
 # Compile the model with Optimizer, Loss Function and Metrics
 # Roc-Auc is not available in Keras as an off the shelf metric yet, so we will skip it here.
-
+#
 model_1.compile(SGD(lr = .003, momentum=0.8), "binary_crossentropy", metrics=["accuracy"])
 run_hist_1 = model_1.fit(X_train_norm, y_train, validation_data=(X_test_norm, y_test), epochs=50)
-# the fit function returns the run history. 
+# the fit function returns the run history.
 # It is very convenient, as it contains information about the model fit, iterations etc.
 
 ## Like we did for the Random Forest, we generate two kinds of predictions
@@ -265,9 +265,7 @@ model_3 = Sequential([
     Dense(3, input_shape=(6,), activation="relu"),
     Dense(1, activation="sigmoid")
 ])
-list_range=np.arange(0.001,0.009,0.003)
-list_range+=np.arange(0.01,0.09,0.03)
-list_range+=np.arange(0.1,0.9,0.3)
+list_range = [0.001, 0.004, 0.007,0.01, 0.04, 0.07,0.1, 0.4, 0.7]
 for i in list_range:
     model_3.compile(SGD(lr = i, momentum=0.8), "binary_crossentropy", metrics=["accuracy"])
     run_hist_3 = model_3.fit(X_train_norm, y_train, validation_data=(X_test_norm, y_test), epochs=500)
