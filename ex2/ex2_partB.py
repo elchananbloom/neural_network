@@ -19,8 +19,10 @@ import matplotlib.pyplot as plt
 alpha = 1  # learning rate
 costs = []
 nh = 2
-# number of iteration
-iterations = 500
+
+
+# # number of iteration
+# iterations = 500
 
 
 def relu(z):
@@ -30,6 +32,7 @@ def relu(z):
     :return: relu of z
     """
     return np.maximum(0, z)
+
 
 # derivative relu function
 relu_der = lambda x: np.array([(i > 0) * 1 for i in x])
@@ -256,6 +259,25 @@ def prediction_accuracy(y_pred, y_true):
     return np.mean(y_pred == y_true)
 
 
+training_relu_data = {
+    '500 iter': [0],
+    '1000 iter': [0],
+    '1500 iter': [0],
+    '2000 iter': [0]
+
+}
+training_two_layer_df = pd.DataFrame(training_relu_data,
+                                     index=['2 nodes'])
+testing_relu_data = {
+    '500 iter': [0],
+    '1000 iter': [0],
+    '1500 iter': [0],
+    '2000 iter': [0]
+
+}
+testing_two_layer_df = pd.DataFrame(testing_relu_data,
+                                    index=['2 nodes'])
+
 url = 'https://github.com/rosenfa/nn/blob/master/pima-indians-diabetes.csv?raw=true'
 # url = 'https://github.com/rosenfa/nn/blob/master/class2/spam.csv?raw=true'
 df = pd.read_csv(url, header=0, error_bad_lines=False)
@@ -268,14 +290,25 @@ df
 
 X_train, X_test = X_train.T, X_test.T
 
-parameters, costs = nn_model(X_train, Y_train, iterations, alpha, nh, relu, relu_der)
-Y_train_predict = predict(X_train, parameters, relu)
-train_acc = prediction_accuracy(Y_train_predict, Y_train)
-Y_test_predict = predict(X_test, parameters, relu)
-test_acc = prediction_accuracy(Y_test_predict, Y_test)
+for iterations in range(500, 2001, 500):
+    parameters, costs = nn_model(X_train, Y_train, iterations, alpha, nh, relu, relu_der)
+    Y_train_predict = predict(X_train, parameters, relu)
+    train_acc = prediction_accuracy(Y_train_predict, Y_train)
+    Y_test_predict = predict(X_test, parameters, relu)
+    test_acc = prediction_accuracy(Y_test_predict, Y_test)
+    training_two_layer_df.loc[f'{nh} nodes', f'{iterations} iter'] = train_acc
+    testing_two_layer_df.loc[f'{nh} nodes', f'{iterations} iter'] = test_acc
+    print("Training acc : ", str(train_acc))
+    print("Testing acc : ", str(test_acc))
 
-print("Training acc : ", str(train_acc))
-print("Testing acc : ", str(test_acc))
 
-plt.plot(costs)
-plt.show()
+x_range = list(map(lambda x: x, range(500, 2001, 500)))
+y_train = list(map(lambda x: training_two_layer_df.loc[f'{nh} nodes', f'{x} iter'], range(500, 2001, 500)))
+y_test = list(map(lambda x: testing_two_layer_df.loc[f'{nh} nodes', f'{x} iter'], range(500, 2001, 500)))
+plt.plot(x_range, y_train, label="train")
+plt.plot(x_range, y_test, label="test")
+plt.legend()
+plt.title = " 2 hidden layers \naccuracy per iterations"
+plt.ylabel('accuracy')
+plt.xlabel('iteration')
+plt.savefig('output_partB.png')
