@@ -265,9 +265,9 @@ model_3 = Sequential([
     Dense(3, input_shape=(6,), activation="relu"),
     Dense(1, activation="sigmoid")
 ])
-list_range=np.arange(0.001,0.009,0.001)
-list_range+=np.arange(0.01,0.09,0.01)
-list_range+=np.arange(0.1,0.9,0.1)
+list_range=np.arange(0.001,0.009,0.003)
+list_range+=np.arange(0.01,0.09,0.03)
+list_range+=np.arange(0.1,0.9,0.3)
 for i in list_range:
     model_3.compile(SGD(lr = i, momentum=0.8), "binary_crossentropy", metrics=["accuracy"])
     run_hist_3 = model_3.fit(X_train_norm, y_train, validation_data=(X_test_norm, y_test), epochs=500)
@@ -277,6 +277,8 @@ for i in list_range:
     ax2.plot(run_hist_3.history["loss"],'r', marker='.', label="Train Loss")
     ax2.plot(run_hist_3.history["val_loss"],'b', marker='.', label="Validation Loss")
     ax2.legend()
+    ax2.get_figure().savefig(f'output_learning_rate_{i}.pdf', format='pdf')
+
     plt.show()
     y_pred_prob_nn_4 = model_3.predict(X_test_norm)
     y_pred_class_nn_4 = np.rint(y_pred_prob_nn_4)
