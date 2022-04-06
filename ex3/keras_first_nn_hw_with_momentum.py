@@ -282,3 +282,12 @@ for i in list_range:
     y_pred_class_nn_4 = np.rint(y_pred_prob_nn_4)
     plot_roc(y_test, y_pred_prob_nn_4, 'NN')
 # Try using more or less epochs and different learning rates for model_3
+
+# our Conclusions:
+# 1) We try changing the number of the epochs to 1,000  and we saw that any addition epoch after 500 was inefficient
+#    when the learning rate was small the difference between the test and the validation was according to the growth of
+#    the epochs but when the learning rate was higher we didn't see any significantly different
+# 2) When the learning rate was small we have overfitting so the test accuracy gets lower as we increase the
+# learning rate. In addition, when the learning rate was above 0.003 the graph was shakiness and when the learning rate
+# was above 0.1 the train and the validation loss was quite stable but at a different level (as you can see in the plot)
+# 3) When we increase the number of the hidden layer in model2 we didn't see any improvement, in model 3 it was worse
