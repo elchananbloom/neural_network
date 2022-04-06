@@ -270,7 +270,7 @@ list_range+=np.arange(0.01,0.09,0.01)
 list_range+=np.arange(0.1,0.9,0.1)
 for i in list_range:
     model_3.compile(SGD(lr = i, momentum=0.8), "binary_crossentropy", metrics=["accuracy"])
-    run_hist_3 = model_3.fit(X_train_norm, y_train, validation_data=(X_test_norm, y_test), epochs=1000)
+    run_hist_3 = model_3.fit(X_train_norm, y_train, validation_data=(X_test_norm, y_test), epochs=500)
 
     # Type your code here to plot the loss, accuracy and ROC curve for model_3
     fig2, ax2 = plt.subplots()
