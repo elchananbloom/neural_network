@@ -236,18 +236,49 @@ Trying different learning rates for model_3.  Did that work better?
 # Define the Model 
 # Input size is 8-dimensional
 model_2 = Sequential([
-    Dense(12, input_shape=(8,), activation="relu"),
+    Dense(6, input_shape=(8,), activation="relu"),
+    Dense(6, input_shape=(6,), activation="relu"),
     Dense(1, activation="sigmoid")
 ])
+model_2.compile(SGD(lr = .003, momentum=0.8), "binary_crossentropy", metrics=["accuracy"])
+run_hist_2 = model_2.fit(X_train_norm, y_train, validation_data=(X_test_norm, y_test), epochs=100)
+
+
+
 
 # Graph the trajectory of the loss functions and accuracy on both train and test set for model_2
-
+fig1, ax1 = plt.subplots()
+ax1.plot(run_hist_2.history["loss"],'r', marker='.', label="Train Loss")
+ax1.plot(run_hist_2.history["val_loss"],'b', marker='.', label="Validation Loss")
+ax1.legend()
+plt.show()
 # Type your code here to plot the loss, accuracy and ROC curve for model_2
-
+y_pred_prob_nn_3 = model_2.predict(X_test_norm)
+y_pred_class_nn_3 = np.rint(y_pred_prob_nn_3)
+plot_roc(y_test, y_pred_prob_nn_3, 'NN')
 # Type your code here for model_3 with layers 1,2,3 having activation relu and you pick the number of nodes in each layer (not the same)
 # and layer 4 with activation sigmoid
 # Define the Model
+model_3 = Sequential([
+    Dense(12, input_shape=(8,), activation="relu"),
+    Dense(6, input_shape=(12,), activation="relu"),
+    Dense(3, input_shape=(6,), activation="relu"),
+    Dense(1, activation="sigmoid")
+])
+list_range=np.arange(0.001,0.009,0.001)
+list_range+=np.arange(0.01,0.09,0.01)
+list_range+=np.arange(0.1,0.9,0.1)
+for i in list_range:
+    model_3.compile(SGD(lr = i, momentum=0.8), "binary_crossentropy", metrics=["accuracy"])
+    run_hist_3 = model_3.fit(X_train_norm, y_train, validation_data=(X_test_norm, y_test), epochs=1000)
 
-# Type your code here to plot the loss, accuracy and ROC curve for model_3
-
+    # Type your code here to plot the loss, accuracy and ROC curve for model_3
+    fig2, ax2 = plt.subplots()
+    ax2.plot(run_hist_3.history["loss"],'r', marker='.', label="Train Loss")
+    ax2.plot(run_hist_3.history["val_loss"],'b', marker='.', label="Validation Loss")
+    ax2.legend()
+    plt.show()
+    y_pred_prob_nn_4 = model_3.predict(X_test_norm)
+    y_pred_class_nn_4 = np.rint(y_pred_prob_nn_4)
+    plot_roc(y_test, y_pred_prob_nn_4, 'NN')
 # Try using more or less epochs and different learning rates for model_3
