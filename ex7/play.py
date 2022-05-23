@@ -17,7 +17,7 @@ for i in range(0,100):#This loops takes about 15 seconds on my computer
         game.printState(board)
     if game.value(board)==10**20: #the MC Agent won
         comp_count+=1
-    print("Start another game")
+    print("Start another game: ",i)
     game.create(board)
 print("The MC agent beat the baseline:", comp_count, " out of ", i+1)
 

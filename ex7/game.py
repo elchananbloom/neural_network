@@ -1,5 +1,6 @@
 import copy
 import random
+from datetime import datetime
 
 VICTORY = 10 ** 20  # The value of a winning board (for max)
 LOSS = -VICTORY  # The value of a losing board (for max)
@@ -7,7 +8,7 @@ TIE = 0  # The value of a tie
 SIZE = 4  # the length of winning seq.
 COMPUTER = SIZE + 1  # Marks the computer's cells on the board
 HUMAN = 1  # Marks the human's cells on the board
-random.seed()
+random.seed(datetime.now())
 
 rows = 6
 columns = 7
@@ -216,7 +217,9 @@ def inputHeuristic(s):
 # }
 
 def randomGame(board):
+
     while(1):
+        random.seed(datetime.now())
         c=random.randint(0,6)
         if board.board[0][c]==0:
             makeMove(board,c)
@@ -226,7 +229,7 @@ def randomGame(board):
 def inputMC(s):
     best = -1
     best_ratio = 0
-    games_per_move = 100
+    games_per_move = 30
 
     for move in range(7):
         if s.board[0][move] != 0:
