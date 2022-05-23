@@ -8,7 +8,7 @@ TIE = 0  # The value of a tie
 SIZE = 4  # the length of winning seq.
 COMPUTER = SIZE + 1  # Marks the computer's cells on the board
 HUMAN = 1  # Marks the human's cells on the board
-random.seed(datetime.now())
+random.seed()
 
 rows = 6
 columns = 7
@@ -187,8 +187,10 @@ def inputRandom(s):
     while flag:
         c = random.randrange(0, columns)
         if c < 0 or c >= columns or s.board[0][c] != 0:
-            print("Illegal move.")
-            printState(s)
+            x='pass this if'
+            #print("Illegal move.")
+            #printState(s)
+
         else:
             flag = False
             makeMove(s, c)
@@ -206,71 +208,48 @@ def inputHeuristic(s):
             temp = value(tmp)
     makeMove(s, tmp_col)
 
-# nt c4RandomGame(board *b, int tomove) {
-#     while(1) {
-#         if (c4Drop(b,rand()%7,tomove)) {
-#             tomove = (tomove == CIRCLE_YELLOW) ? CIRCLE_RED : CIRCLE_YELLOW;
-#         }
-#         int winner = c4GetWinner(b);
-#         if (winner != CIRCLE_EMPTY) return winner;
-#     }
-# }
-
+#play a random game and return when someone wins or tie
 def randomGame(board):
+    new_baord = cpy(board)
 
-    while(1):
-        random.seed(datetime.now())
-        c=random.randint(0,6)
-        if board.board[0][c]==0:
-            makeMove(board,c)
-        if isFinished(board):
-            return value(board)
+    while(True):
+        inputRandom(new_baord)
+        # c=random.randrange(0,columns)
+        # if board.board[0][c]==0:
+        #     makeMove(board,c)
+        if isFinished(new_baord):
+            return value(new_baord)
 
 def inputMC(s):
     best = -1
     best_ratio = 0
-    games_per_move = 30
 
+    games_per_move = 50
+
+    #for each column checks the ratio if the next move will be in this column
     for move in range(7):
-        if s.board[0][move] != 0:
+        if s.board[0][move] != 0:#if the column full pass this option
             continue
         won = lost = 0
+        #play games_per_move(100) games for each column and return the highest ratio which the next move will be
         for j in range(games_per_move):
             board = cpy(s)
-            makeMove(board,move)
-            if value(board) == VICTORY:
+            makeMove(board,move)#try to make the move in the current column
+            if value(board) == VICTORY:#if the next move is victory do the move and stop the search for a better ratio
                 makeMove(s,move)
                 return
 
-# result = winer
-            result = randomGame(board)
+            result = randomGame(board)#play one game and get add the result of the random game to the right varialable
             if result == VICTORY:
                 won += 1
             elif result == LOSS:
                 lost += 1
 
-        ratio = won / (lost +1)
+        ratio = won / games_per_move#calculate the ratio and update the best move and best ratio according to this
+        print(f'ratio: {ratio} column:{move}')
         if ratio > best_ratio or best == -1:
             best = move
             best_ratio = ratio
     print(f'best move: {best}, best ratio: {best_ratio}')
-    makeMove(s,best)
+    makeMove(s,best)#make the best move according to the best ratio
 
-
-
-
-
-
-
-
-
-
-    # flag = True
-    # while flag:
-    #     c = random.randrange(0, columns)
-    #     if c < 0 or c >= columns or s.board[0][c] != 0:
-    #         print("Illegal move.")
-    #         printState(s)
-    #     else:
-    #         flag = False
-    #         makeMove(s, c)
