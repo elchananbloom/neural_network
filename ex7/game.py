@@ -1,5 +1,6 @@
 import copy
 import random
+import concurrent.futures
 from datetime import datetime
 
 VICTORY = 10 ** 20  # The value of a winning board (for max)
@@ -221,35 +222,92 @@ def randomGame(board):
             return value(new_baord)
 
 def inputMC(s):
+    #     with concurrent.futures.ThreadPoolExecutor() as executor:
+    #       futures = [executor.submit(column_play, s, i) for i in range(0,columns)]  #futures is list that contains threads for each column.
+    #     percentage = [f.result() for f in futures]  #percentage is list that contains for each column the percentage of wins (from the simulations).
+    #     makeMove(s, percentage.index(max(percentage)))
+    #
     best = -1
     best_ratio = 0
-
-    games_per_move = 50
+    br=[0]*50
+    p=[0]*columns
 
     #for each column checks the ratio if the next move will be in this column
-    for move in range(7):
-        if s.board[0][move] != 0:#if the column full pass this option
-            continue
-        won = lost = 0
-        #play games_per_move(100) games for each column and return the highest ratio which the next move will be
-        for j in range(games_per_move):
-            board = cpy(s)
-            makeMove(board,move)#try to make the move in the current column
-            if value(board) == VICTORY:#if the next move is victory do the move and stop the search for a better ratio
-                makeMove(s,move)
-                return
-
-            result = randomGame(board)#play one game and get add the result of the random game to the right varialable
-            if result == VICTORY:
-                won += 1
-            elif result == LOSS:
-                lost += 1
-
-        ratio = won / games_per_move#calculate the ratio and update the best move and best ratio according to this
-        print(f'ratio: {ratio} column:{move}')
-        if ratio > best_ratio or best == -1:
-            best = move
-            best_ratio = ratio
-    print(f'best move: {best}, best ratio: {best_ratio}')
+    for move in range(0,columns):
+        p[move]=play_column(s,move)
+    best=p.index(max(p))
+    print(f'best move: {best}, best ratio: {max(p)}')
     makeMove(s,best)#make the best move according to the best ratio
 
+def play_column(s,move):
+    # Run the 50 games simultaneously for a particular column selection.
+
+    # num_games = 50
+    #     victory_count = 0
+    #     from_game = cpy(game)
+    #     makeMove(from_game, n)
+    #     with concurrent.futures.ThreadPoolExecutor() as executor:
+    #         futures = [executor.submit(play_random_game,from_game) for i in range(0, num_games)]  #futures is list that contains threads for each game.
+    #
+    #     res = ([1 if f.result() else 0 for f in futures]) #res is list that contains the results for each game.
+    #     victory_count = sum(res)
+    #     return victory_count / num_games  #Returns the percentage of wins.
+    games_per_move = 50
+    # if s.board[0][move] != 0:  # if the column full pass this option
+    #     continue
+    won = lost = 0
+    board = cpy(s)
+    makeMove(board, move)  # try to make the move in the current column
+    res=[0]*games_per_move
+    # play games_per_move(100) games for each column and return the highest ratio which the next move will be
+    for j in range(games_per_move):
+        res[j]=randomGame(board)
+    res=([1 if i==VICTORY else 0 for i in res])
+    won = sum(res)
+    return won / games_per_move  # calculate the ratio and update the best move and best ratio according to this
+    # print(f'ratio: {ratio} column:{move}')
+    # if ratio > best_ratio or best == -1:
+    #     best = move
+    #     best_ratio = ratio
+
+# def play_random_game(board):
+#     #     tmp = cpy(from_game)
+#     #     while not isFinished(tmp):
+#     #         inputRandom(tmp)
+#     #
+#     #     return value(tmp) == VICTORY
+#     if value(board) == VICTORY:  # if the next move is victory do the move and stop the search for a better ratio
+#         makeMove(s, move)
+#         return
+#
+#     result = randomGame(board)  # play one game and get add the result of the random game to the right varialable
+#     if result == VICTORY:
+#         won += 1
+#     elif result == LOSS:
+#         lost += 1
+# def inputMC(s):
+#     with concurrent.futures.ThreadPoolExecutor() as executor:
+#       futures = [executor.submit(column_play, s, i) for i in range(0,columns)]  #futures is list that contains threads for each column.
+#     percentage = [f.result() for f in futures]  #percentage is list that contains for each column the percentage of wins (from the simulations).
+#     makeMove(s, percentage.index(max(percentage)))
+#
+#
+# def column_play(game, n): #Run the 50 games simultaneously for a particular column selection.
+#     num_games = 50
+#     victory_count = 0
+#     from_game = cpy(game)
+#     makeMove(from_game, n)
+#     with concurrent.futures.ThreadPoolExecutor() as executor:
+#         futures = [executor.submit(play_random_game,from_game) for i in range(0, num_games)]  #futures is list that contains threads for each game.
+#
+#     res = ([1 if f.result() else 0 for f in futures]) #res is list that contains the results for each game.
+#     victory_count = sum(res)
+#     return victory_count / num_games  #Returns the percentage of wins.
+#
+#
+# def play_random_game(from_game):  #A function that plays a random game to the end and returns True if the computer won otherwise False
+#     tmp = cpy(from_game)
+#     while not isFinished(tmp):
+#         inputRandom(tmp)
+#
+#     return value(tmp) == VICTORY
